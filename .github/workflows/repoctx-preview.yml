@@ -63,6 +63,8 @@ jobs:
           node --test build/lib/test/copilot.test.ts
 
       - name: Build Apple Silicon app
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: npm run gulp vscode-darwin-arm64
 
       - name: Sign, smoke-test, and package preview
