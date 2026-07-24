@@ -91,4 +91,4 @@ stateDiagram-v2
 
 Repoctx IDE bundles a tested Repoctx engine version. Dependency automation is configured to watch registry-backed `@nugehs/repoctx` releases and open a focused update pull request. CI must validate that update before it ships in an IDE release. An installed IDE never changes its trust engine silently between application releases.
 
-The current foundation pins the public Repoctx `2.4.0` source commit because `2.4.0` is not yet available from npm. After that version is published, switch this dependency once to the npm package; later npm bumps will flow through the automated update pull requests.
+The current foundation pins the published `@nugehs/repoctx@2.5.0` package. Dependabot checks npm daily, and later releases flow through focused update pull requests instead of changing the bundled engine silently.
