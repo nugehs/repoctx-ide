@@ -409,6 +409,14 @@ function packageTask(platform: string, arch: string, sourceFolderName: string, d
 				'**/*.mk',
 			], [
 				'node_modules/vsda/**', // retain copy of `vsda` in node_modules for internal use
+				// Repoctx stages are launched as direct Electron-as-Node processes. Keep
+				// their entrypoints and transitive package-local dependencies on disk so
+				// the same structured invocation works after node_modules is archived.
+				'node_modules/@nugehs/repoctx/**',
+				'node_modules/@nugehs/tieline/**',
+				'node_modules/@nugehs/bouncer/**',
+				'node_modules/@nugehs/aiglare/**',
+				'node_modules/.bin/{repoctx,dev-context,tieline,tieline-mcp,bouncer,aiglare,glare}{,.cmd,.ps1}',
 				// The sandbox runtime is spawned as a standalone Node subprocess (no ASAR
 				// resolution hook), so it and its transitive JS dependencies must remain as
 				// real files under `node_modules`. Keep them duplicated out of the archive.
@@ -471,9 +479,12 @@ function packageTask(platform: string, arch: string, sourceFolderName: string, d
 				.pipe(replace('@@APPNAME@@', product.applicationName))
 				.pipe(replace('@@NAME@@', product.nameShort))
 				.pipe(rename('bin/code'));
+			const repoctxNodeRuntime = gulp.src('resources/darwin/bin/repoctx-node.sh')
+				.pipe(replace('@@NAME@@', product.nameShort))
+				.pipe(rename('bin/repoctx-runtime/node'));
 			const policyDest = gulp.src('.build/policies/darwin/**', { base: '.build/policies/darwin' })
 				.pipe(rename(f => f.dirname = `policies/${f.dirname}`));
-			all = es.merge(all, shortcut, policyDest);
+			all = es.merge(all, shortcut, repoctxNodeRuntime, policyDest);
 		}
 
 		const electronConfig = {

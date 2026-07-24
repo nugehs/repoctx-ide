@@ -8,8 +8,9 @@ import { Button } from '../../../../base/browser/ui/button/button.js';
 import { Codicon } from '../../../../base/common/codicons.js';
 import { DisposableStore } from '../../../../base/common/lifecycle.js';
 import { ThemeIcon } from '../../../../base/common/themables.js';
-import { join } from '../../../../base/common/path.js';
-import { isWindows } from '../../../../base/common/platform.js';
+import { delimiter, join } from '../../../../base/common/path.js';
+import { isMacintosh, isWindows } from '../../../../base/common/platform.js';
+import { env as processEnvironment } from '../../../../base/common/process.js';
 import { URI } from '../../../../base/common/uri.js';
 import { localize, localize2 } from '../../../../nls.js';
 import { ICommandService } from '../../../../platform/commands/common/commands.js';
@@ -530,6 +531,7 @@ export class RepoctxTrustViewPane extends ViewPane {
 						REPOCTX_TIELINE_BIN: this.bundledToolBinary('tieline'),
 						REPOCTX_BOUNCER_BIN: this.bundledToolBinary('bouncer'),
 						REPOCTX_AIGLARE_BIN: this.bundledToolBinary('aiglare'),
+						...this.bundledToolEnvironment(),
 					},
 					waitOnExit: true,
 				},
@@ -557,7 +559,23 @@ export class RepoctxTrustViewPane extends ViewPane {
 	}
 
 	private bundledToolBinary(name: string): string {
-		return join(this.environmentService.appRoot, 'node_modules', '.bin', isWindows ? `${name}.cmd` : name);
+		if (isWindows) {
+			return join(this.environmentService.appRoot, 'node_modules', '.bin', `${name}.cmd`);
+		}
+		if (!this.environmentService.isBuilt) {
+			return join(this.environmentService.appRoot, 'node_modules', '.bin', name);
+		}
+		const entrypoint = name === 'tieline' ? ['@nugehs', 'tieline', 'bin', 'tieline.mjs'] : ['@nugehs', name, 'src', 'cli.js'];
+		return join(this.environmentService.appRoot, 'node_modules', ...entrypoint);
+	}
+
+	private bundledToolEnvironment(): Record<string, string> {
+		if (!this.environmentService.isBuilt || !isMacintosh) {
+			return {};
+		}
+		const runtimeDirectory = join(this.environmentService.appRoot, 'bin', 'repoctx-runtime');
+		const inheritedPath = processEnvironment['PATH'] ?? '/usr/bin:/bin:/usr/sbin:/sbin';
+		return { PATH: `${runtimeDirectory}${delimiter}${inheritedPath}` };
 	}
 
 	private getStagePresentations(): readonly IRepoctxStagePresentation[] {
