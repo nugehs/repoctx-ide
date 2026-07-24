@@ -252,12 +252,12 @@ function createCopilotSetupStep(id: string, button: string, when: string, includ
 export const walkthroughs: GettingStartedWalkthroughContent = [
 	{
 		id: 'Setup',
-		title: localize('gettingStarted.setup.title', "Get started with Repoctx IDE"),
+		title: localize('gettingStarted.setup.title', "Get started with Repoctx"),
 		description: localize('gettingStarted.setup.description', "Set up your workbench and make repository context visible from the first change"),
 		isFeatured: true,
 		icon: setupIcon,
 		when: '!isWeb',
-		walkthroughPageTitle: localize('gettingStarted.setup.walkthroughPageTitle', 'Set up Repoctx IDE'),
+		walkthroughPageTitle: localize('gettingStarted.setup.walkthroughPageTitle', 'Set up Repoctx'),
 		next: 'Beginner',
 		content: {
 			type: 'steps',

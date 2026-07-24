@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-labelledby="title description">
-	<title id="title">Repoctx IDE</title>
+	<title id="title">Repoctx</title>
 	<desc id="description">The Repoctx connected repository mark on a warm workbench tile.</desc>
 	<defs>
 		<mask id="repoctx-node-cutouts">

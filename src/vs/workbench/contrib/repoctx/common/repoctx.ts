@@ -170,7 +170,7 @@ export function buildRepoctxAgentContext(options: IRepoctxAgentContextOptions): 
 	].filter((attribute): attribute is string => Boolean(attribute));
 	const lines = [
 		'<repoctx_context>',
-		'This repository context is provided automatically by Repoctx IDE.',
+		'This repository context is provided automatically by Repoctx.',
 		`<repository ${repositoryAttributes.join(' ')}>`,
 	];
 

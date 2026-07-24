@@ -1,4 +1,4 @@
-name: Repoctx IDE Preview
+name: Repoctx Preview
 
 on:
   pull_request:
@@ -69,7 +69,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          APP="$GITHUB_WORKSPACE/../VSCode-darwin-arm64/Repoctx IDE.app"
+          APP="$GITHUB_WORKSPACE/../VSCode-darwin-arm64/Repoctx.app"
           EXECUTABLE="$APP/Contents/MacOS/Repoctx"
           APP_ROOT="$APP/Contents/Resources/app"
           UNPACKED_ROOT="$APP_ROOT/node_modules.asar.unpacked"
@@ -136,9 +136,9 @@ jobs:
             "$EXECUTABLE" "$CLI" gate "$SMOKE_REPO" --request "validate packaged AI gate" --json > "$GATE_JSON"
           node -e 'const fs = require("fs"); const data = JSON.parse(fs.readFileSync(process.argv[1], "utf8")); const check = data.checks.find(item => item.name === "AI governance"); if (check?.status !== "PASS") { throw new Error(`AI governance smoke failed: ${JSON.stringify(check)}`); }' "$GATE_JSON"
 
-          DIST="$RUNNER_TEMP/repoctx-ide-preview"
+          DIST="$RUNNER_TEMP/repoctx-preview"
           SHORT_SHA="${GITHUB_SHA:0:7}"
-          ARCHIVE="Repoctx-IDE-macOS-arm64-$SHORT_SHA.zip"
+          ARCHIVE="Repoctx-macOS-arm64-$SHORT_SHA.zip"
           mkdir -p "$DIST"
           ditto -c -k --sequesterRsrc --keepParent "$APP" "$DIST/$ARCHIVE"
           cd "$DIST"
@@ -147,10 +147,10 @@ jobs:
       - name: Upload preview
         uses: actions/upload-artifact@v7
         with:
-          name: repoctx-ide-macos-arm64-${{ github.sha }}
+          name: repoctx-macos-arm64-${{ github.sha }}
           path: |
-            ${{ runner.temp }}/repoctx-ide-preview/*.zip
-            ${{ runner.temp }}/repoctx-ide-preview/*.sha256
+            ${{ runner.temp }}/repoctx-preview/*.zip
+            ${{ runner.temp }}/repoctx-preview/*.sha256
           if-no-files-found: error
           retention-days: 14
 
@@ -166,7 +166,7 @@ jobs:
       - name: Download preview
         uses: actions/download-artifact@v8
         with:
-          name: repoctx-ide-macos-arm64-${{ github.sha }}
+          name: repoctx-macos-arm64-${{ github.sha }}
           path: dist
 
       - name: Create prerelease
@@ -176,5 +176,5 @@ jobs:
           gh release create "$GITHUB_REF_NAME" dist/* \
             --repo "$GITHUB_REPOSITORY" \
             --prerelease \
-            --title "Repoctx IDE $GITHUB_REF_NAME" \
+            --title "Repoctx $GITHUB_REF_NAME" \
             --notes "Apple Silicon developer preview. Verify the attached checksum before installing. This build is ad-hoc signed and not yet Apple-notarized."
