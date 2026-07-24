@@ -52,7 +52,7 @@ jobs:
         run: node test/unit/node/index.js --run src/vs/workbench/contrib/repoctx/test/common/repoctx.test.ts
 
       - name: Build Apple Silicon app
-        run: npm run gulp vscode-darwin-arm64-ci
+        run: npm run gulp vscode-darwin-arm64
 
       - name: Sign, smoke-test, and package preview
         shell: bash
