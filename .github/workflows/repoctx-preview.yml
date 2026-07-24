@@ -8,6 +8,8 @@ on:
       - ".npmrc"
       - "build/.moduleignore*"
       - "build/gulpfile.vscode.ts"
+      - "build/lib/copilot.ts"
+      - "build/lib/test/copilot.test.ts"
       - "package.json"
       - "package-lock.json"
       - "product.json"
@@ -49,7 +51,9 @@ jobs:
         run: npm run compile-client
 
       - name: Test Repoctx evidence integration
-        run: node test/unit/node/index.js --run src/vs/workbench/contrib/repoctx/test/common/repoctx.test.ts
+        run: |
+          node test/unit/node/index.js --run src/vs/workbench/contrib/repoctx/test/common/repoctx.test.ts
+          node --test build/lib/test/copilot.test.ts
 
       - name: Build Apple Silicon app
         run: npm run gulp vscode-darwin-arm64
