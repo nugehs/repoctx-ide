@@ -1,5 +1,5 @@
 ---
-product: Repoctx IDE
+product: Repoctx
 register: product
 creative_north_star: The Evidence Workbench
 version: 0.1.0
@@ -7,7 +7,7 @@ version: 0.1.0
 
 # Overview
 
-Repoctx IDE should feel like an evidence workbench built into a familiar code editor. The visual system is restrained and structural: repository relationships, ownership, risk, validation, and review state are connected through clear hierarchy rather than decorative chrome.
+Repoctx should feel like an evidence workbench built into a familiar code editor. The visual system is restrained and structural: repository relationships, ownership, risk, validation, and review state are connected through clear hierarchy rather than decorative chrome.
 
 The creative signature is the connected repository map. Small nodes and deliberate connector lines may show how files, routes, tests, owners, and checks relate. Use this metaphor only when it explains a real relationship.
 

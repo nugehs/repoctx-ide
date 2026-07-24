@@ -1,19 +1,19 @@
-# Repoctx IDE macOS preview
+# Repoctx macOS preview
 
-The first installable Repoctx IDE preview is intended for a small group of trusted testers using Apple Silicon Macs. It packages the same native Trust Rail and `@nugehs/repoctx` engine validated in the repository.
+The first installable Repoctx preview is intended for a small group of trusted testers using Apple Silicon Macs. It packages the same native Trust Rail and `@nugehs/repoctx` engine validated in the repository.
 
 ## Install a preview
 
 1. Confirm the Mac reports `arm64` when you run `uname -m`.
-2. Download the newest Repoctx IDE prerelease ZIP and its `.sha256` file from [GitHub Releases](https://github.com/nugehs/repoctx-ide/releases).
+2. Download the newest Repoctx prerelease ZIP and its `.sha256` file from [GitHub Releases](https://github.com/nugehs/repoctx-ide/releases).
 3. Keep both files in the same folder and run:
 
    ```bash
-   shasum -a 256 -c Repoctx-IDE-macOS-arm64-*.sha256
+   shasum -a 256 -c Repoctx-macOS-arm64-*.sha256
    ```
 
-4. Unzip the archive and drag **Repoctx IDE** into **Applications**.
-5. Control-click **Repoctx IDE**, choose **Open**, and confirm the first-launch prompt.
+4. Unzip the archive and drag **Repoctx** into **Applications**.
+5. Control-click **Repoctx**, choose **Open**, and confirm the first-launch prompt.
 
 Do not disable Gatekeeper. These early builds are ad-hoc signed but do not carry a verified publisher identity and are not yet notarized by Apple. The matching SHA-256 file is the integrity check for the downloaded archive.
 
@@ -39,4 +39,4 @@ An Intel Mac cannot run this first package. Intel and Universal downloads will f
 - The preview requires macOS 12 or newer.
 - Updates are manual; download a newer prerelease when one is published.
 - Additional extensions may require manual VSIX installation because this Code OSS distribution does not use Microsoft's extension marketplace.
-- Product icon and installer artwork remain part of the later branding milestone.
+- The preview is still evolving; visual polish and notarized distribution will continue after the first tester release.

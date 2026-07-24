@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+	<defs>
+		<mask id="repoctx-node-cutouts">
+			<rect width="868" height="662" fill="white"/>
+			<circle cx="332" cy="230" r="15" fill="black"/>
+			<circle cx="518" cy="230" r="15" fill="black"/>
+			<circle cx="332" cy="489" r="15" fill="black"/>
+		</mask>
+	</defs>
+	<rect x="54" y="54" width="916" height="916" rx="214" fill="#F7F5F2" stroke="#E7E1D8" stroke-width="8"/>
+	<g transform="translate(-10 76) scale(1.304)">
+		<path d="M241 493 207 469c-8-6-13-16-13-26V197c0-13 7-26 18-33L383 63c9-6 20-7 30-1l101 67" fill="none" stroke="#151C24" stroke-width="38" stroke-linecap="round" stroke-linejoin="round"/>
+		<path d="M289 550 371 606c9 6 21 6 30 0l192-124c8-6 13-16 13-27V230" fill="none" stroke="#2F7D72" stroke-width="36" stroke-linecap="round" stroke-linejoin="round"/>
+		<g mask="url(#repoctx-node-cutouts)">
+			<path d="M332 489V271c0-23 18-41 41-41h145" fill="none" stroke="#E87500" stroke-width="36" stroke-linecap="round" stroke-linejoin="round"/>
+			<circle cx="332" cy="230" r="29" fill="none" stroke="#E87500" stroke-width="28"/>
+			<circle cx="518" cy="230" r="29" fill="none" stroke="#E87500" stroke-width="28"/>
+			<circle cx="332" cy="489" r="29" fill="none" stroke="#E87500" stroke-width="28"/>
+		</g>
+	</g>
+</svg>

@@ -21,7 +21,7 @@ import { repoctxAgentContextEnabledSetting } from '../common/repoctx.js';
 import { RepoctxChatContextContribution } from './repoctxChatContext.js';
 import { RepoctxTrustViewPane } from './repoctxView.js';
 
-// Native Repoctx IDE view container.
+// Native Repoctx view container.
 export const REPOCTX_VIEW_CONTAINER_ID = 'workbench.view.repoctx';
 
 const repoctxViewIcon = registerIcon('repoctx-view-icon', Codicon.shield, localize('repoctxViewIcon', "View icon for Repoctx trust evidence."));

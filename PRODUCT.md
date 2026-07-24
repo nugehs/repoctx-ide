@@ -1,5 +1,5 @@
 ---
-product: Repoctx IDE
+product: Repoctx
 register: product
 status: foundation
 ---
@@ -12,17 +12,17 @@ Product
 
 ## Users
 
-Repoctx IDE is for developers and software teams using AI-assisted coding who need to understand a repository before changing it and prove a change is safe before merging it. It supports solo builders, reviewers, maintainers, and teams with formal ownership or governance requirements.
+Repoctx is for developers and software teams using AI-assisted coding who need to understand a repository before changing it and prove a change is safe before merging it. It supports solo builders, reviewers, maintainers, and teams with formal ownership or governance requirements.
 
 ## Product Purpose
 
-Repoctx IDE makes repository context, change impact, validation, permissions, review readiness, and durable evidence native to the coding environment. The editor remains familiar, but trust becomes visible everywhere.
+Repoctx makes repository context, change impact, validation, permissions, review readiness, and durable evidence native to the coding environment. The editor remains familiar, but trust becomes visible everywhere.
 
 Within the first ten seconds, a user should understand what repository is open, what matters in it, what a proposed change may affect, and what evidence is still needed before merge.
 
-Repoctx is the context foundation. PullPass is the merge-safety gate. Repoctx IDE is the workbench where both become an intuitive daily workflow.
+Repoctx is the context foundation and evidence workbench. PullPass is the merge-safety gate. Together they make trusted AI-assisted development an intuitive daily workflow.
 
-Repoctx IDE was created by Oluwasegun Olumbe.
+Repoctx was created by Oluwasegun Olumbe.
 
 ## Brand Personality
 
@@ -52,4 +52,4 @@ Repoctx IDE was created by Oluwasegun Olumbe.
 
 ## Accessibility and Inclusion
 
-Repoctx IDE targets WCAG 2.2 AA for product-owned surfaces. All core actions must work by keyboard and screen reader. High-contrast themes and reduced-motion settings are first-class. Status must never depend on color alone, and risk language must describe evidence without blaming the developer.
+Repoctx targets WCAG 2.2 AA for product-owned surfaces. All core actions must work by keyboard and screen reader. High-contrast themes and reduced-motion settings are first-class. Status must never depend on color alone, and risk language must describe evidence without blaming the developer.
