@@ -208,6 +208,34 @@ suite('copilot', () => {
 		}
 	});
 
+	test('restores a generated Copilot SDK omitted by the extension packaging stream', () => {
+		const repoRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'vscode-copilot-sdk-restore-test-'));
+		try {
+			const builtInCopilotExtensionDir = path.join(repoRoot, 'app', 'extensions', 'copilot');
+			const extensionCopilotDir = path.join(builtInCopilotExtensionDir, 'node_modules', '@github', 'copilot');
+			const sourceCopilotSdkDir = path.join(repoRoot, 'source', 'node_modules', '@github', 'copilot', 'sdk');
+			const appNodeModulesDir = path.join(repoRoot, 'app', 'node_modules');
+			const platformPackageDir = path.join(appNodeModulesDir, '@github', 'copilot-win32-x64');
+
+			fs.mkdirSync(sourceCopilotSdkDir, { recursive: true });
+			fs.writeFileSync(path.join(sourceCopilotSdkDir, 'index.js'), 'export {};');
+			fs.mkdirSync(path.join(platformPackageDir, 'prebuilds', 'win32-x64'), { recursive: true });
+			fs.writeFileSync(path.join(platformPackageDir, 'prebuilds', 'win32-x64', 'runtime.node'), '');
+			fs.mkdirSync(path.join(platformPackageDir, 'tgrep', 'bin', 'win32-x64'), { recursive: true });
+			fs.writeFileSync(path.join(platformPackageDir, 'tgrep', 'bin', 'win32-x64', 'tgrep.exe'), '');
+			fs.mkdirSync(path.join(appNodeModulesDir, '@vscode', 'ripgrep-universal', 'bin', 'win32-x64'), { recursive: true });
+			fs.writeFileSync(path.join(appNodeModulesDir, '@vscode', 'ripgrep-universal', 'bin', 'win32-x64', 'rg.exe'), '');
+
+			prepareBuiltInCopilotRipgrepShim('win32', 'x64', builtInCopilotExtensionDir, appNodeModulesDir, sourceCopilotSdkDir);
+
+			assert.strictEqual(fs.readFileSync(path.join(extensionCopilotDir, 'sdk', 'index.js'), 'utf8'), 'export {};');
+			assert(fs.existsSync(path.join(extensionCopilotDir, 'sdk', 'prebuilds', 'win32-x64', 'runtime.node')));
+			assert(fs.existsSync(path.join(extensionCopilotDir, 'sdk', 'ripgrep', 'bin', 'win32-x64', 'rg.exe')));
+		} finally {
+			fs.rmSync(repoRoot, { recursive: true, force: true });
+		}
+	});
+
 	test('strips all copilot platform packages for unsupported armhf builds', () => {
 		assert.deepStrictEqual(
 			getCopilotExcludeFilter('linux', 'armhf'),

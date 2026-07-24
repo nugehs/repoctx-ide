@@ -12,6 +12,37 @@ When Context evidence is available, Repoctx automatically provides every IDE age
 
 See the [Repoctx IDE trust workflow](docs/repoctx-ide/trust-workflow.md) for the interaction contract and evidence states.
 
+## Try Repoctx IDE
+
+### macOS preview
+
+The first packaged preview targets Apple Silicon Macs. Download the newest prerelease ZIP and matching `.sha256` file from [Repoctx IDE Releases](https://github.com/nugehs/repoctx-ide/releases), then verify it before opening:
+
+```bash
+shasum -a 256 -c Repoctx-IDE-macOS-arm64-*.sha256
+```
+
+Unzip the app, drag **Repoctx IDE** into **Applications**, then Control-click it and choose **Open** the first time. Preview builds are ad-hoc signed but not yet Apple-notarized; never disable Gatekeeper globally.
+
+### Run from source
+
+Repoctx IDE currently requires Node `24.18.0` and npm 11. Clone the repository, use the version in `.nvmrc`, install the locked dependencies, and launch with an isolated trial profile:
+
+```bash
+git clone --depth 1 https://github.com/nugehs/repoctx-ide.git
+cd repoctx-ide
+nvm install
+nvm use
+npm install
+./scripts/code.sh \
+  --user-data-dir "$PWD/.build/repoctx-profile/user-data" \
+  --extensions-dir "$PWD/.build/repoctx-profile/extensions"
+```
+
+Open a repository you control, select the shield-shaped Repoctx view, describe the intended change, and follow Context → Impact → Review → Gate → Audit. Repoctx is bundled; no global Repoctx installation is needed.
+
+See the [macOS preview guide](docs/repoctx-ide/macos-preview.md) for sharing, architecture, and current trust limitations.
+
 ## Development
 
 ```bash

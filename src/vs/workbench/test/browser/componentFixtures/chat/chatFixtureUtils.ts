@@ -226,7 +226,10 @@ export function registerChatFixtureServices(reg: ServiceRegistration, options: I
 		override getCached() { return undefined; }
 		override async assess() { return undefined; }
 	}());
-	reg.defineInstance(IChatContextService, new class extends mock<IChatContextService>() { }());
+	reg.defineInstance(IChatContextService, new class extends mock<IChatContextService>() {
+		override readonly onDidChangeWorkspaceContext = Event.None;
+		override getWorkspaceContextItems() { return []; }
+	}());
 	reg.defineInstance(IChatContextPickService, new class extends mock<IChatContextPickService>() { }());
 	// Needed whenever chat markdown contains a code block; returns no custom renderer so
 	// code blocks fall back to the normal editor-backed CodeBlockPart.

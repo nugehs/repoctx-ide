@@ -229,10 +229,14 @@ export function ensureCopilotPlatformPackage(platform: string, arch: string, nod
  * `node-pty` from the embedder (VS Code) via `hostRequire` and falls back to
  * its bundled copy only if that fails.
  *
+ * The extension packaging stream can omit the generated SDK tree even though
+ * the Copilot postinstall materialized it in the source tree. In that case,
+ * restore the SDK before applying target-platform shims and pruning.
+ *
  * Failures throw to fail the build because built-in packaging must guarantee
  * this artifact is present.
  */
-export function prepareBuiltInCopilotRipgrepShim(platform: string, arch: string, builtInCopilotExtensionDir: string, appNodeModulesDir: string): void {
+export function prepareBuiltInCopilotRipgrepShim(platform: string, arch: string, builtInCopilotExtensionDir: string, appNodeModulesDir: string, sourceCopilotSdkDir?: string): void {
 	const { nodePlatform, nodeArch } = toNodePlatformArch(platform, arch);
 	const platformArch = `${nodePlatform}-${nodeArch}`;
 	const copilotPackagePlatformArch = toCopilotPackagePlatformArch(platform, arch);
@@ -241,6 +245,11 @@ export function prepareBuiltInCopilotRipgrepShim(platform: string, arch: string,
 	const extensionNodeModules = path.join(builtInCopilotExtensionDir, 'node_modules');
 	const copilotBase = path.join(extensionNodeModules, '@github', 'copilot');
 	const copilotSdkBase = path.join(copilotBase, 'sdk');
+	if (!fs.existsSync(copilotSdkBase) && sourceCopilotSdkDir && fs.existsSync(sourceCopilotSdkDir)) {
+		fs.mkdirSync(copilotBase, { recursive: true });
+		fs.cpSync(sourceCopilotSdkDir, copilotSdkBase, { recursive: true });
+		console.log(`[prepareBuiltInCopilotRipgrepShim] Restored Copilot SDK from ${sourceCopilotSdkDir}`);
+	}
 	if (!fs.existsSync(copilotSdkBase)) {
 		throw new Error(`[prepareBuiltInCopilotRipgrepShim] Copilot SDK directory not found at ${copilotSdkBase}`);
 	}
