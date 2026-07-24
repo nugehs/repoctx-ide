@@ -13,7 +13,13 @@ on:
       - "package.json"
       - "package-lock.json"
       - "product.json"
+      - "resources/branding/**"
       - "resources/darwin/**"
+      - "src/vs/base/common/product.ts"
+      - "src/vs/platform/dialogs/electron-browser/dialog.ts"
+      - "src/vs/workbench/browser/parts/dialogs/dialog.ts"
+      - "src/vs/workbench/contrib/welcomeGettingStarted/**"
+      - "src/vs/workbench/contrib/welcomeOnboarding/**"
       - "src/vs/workbench/contrib/repoctx/**"
   push:
     tags:
@@ -72,6 +78,8 @@ jobs:
 
           test "$(uname -m)" = "arm64"
           test -x "$EXECUTABLE"
+          test -f "$APP/Contents/Resources/Repoctx.icns"
+          cmp "$GITHUB_WORKSPACE/resources/darwin/code.icns" "$APP/Contents/Resources/Repoctx.icns"
           test -f "$CLI"
           test -x "$APP_ROOT/node_modules/@nugehs/tieline/bin/tieline.mjs"
           test -x "$APP_ROOT/node_modules/@nugehs/bouncer/src/cli.js"
@@ -80,6 +88,7 @@ jobs:
 
           PACKAGED_VERSION="$(node -p "require('$APP_ROOT/node_modules/@nugehs/repoctx/package.json').version")"
           test "$PACKAGED_VERSION" = "$EXPECTED_VERSION"
+          test "$(node -p "require('$APP_ROOT/product.json').productTagline")" = "Context before change. Evidence before merge."
 
           codesign --force --deep --sign - --timestamp=none "$APP"
           codesign --verify --deep --strict --verbose=2 "$APP"

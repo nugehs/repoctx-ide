@@ -17,6 +17,7 @@ export function createNativeAboutDialogDetails(productService: IProductService, 
 	} else if (productService.darwinUniversalAssetId) {
 		version = `${version} (Universal)`;
 	}
+	const productTagline = productService.productTagline;
 	const creatorDetails = productService.creatorName ? localize('aboutCreatedBy', "Created by {0}", productService.creatorName) : undefined;
 
 	const getDetails = (useAgo: boolean): string => {
@@ -34,8 +35,8 @@ export function createNativeAboutDialogDetails(productService: IProductService, 
 		);
 	};
 
-	const details = [creatorDetails, getDetails(true)].filter(detail => detail !== undefined).join('\n');
-	const detailsToCopy = [creatorDetails, getDetails(false)].filter(detail => detail !== undefined).join('\n');
+	const details = [productTagline, creatorDetails, getDetails(true)].filter(detail => detail !== undefined).join('\n');
+	const detailsToCopy = [productTagline, creatorDetails, getDetails(false)].filter(detail => detail !== undefined).join('\n');
 
 	return {
 		title: productService.nameLong,

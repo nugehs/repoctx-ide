@@ -2,6 +2,7 @@
 	"nameShort": "Repoctx",
 	"nameLong": "Repoctx IDE",
 	"creatorName": "Oluwasegun Olumbe",
+	"productTagline": "Context before change. Evidence before merge.",
 	"applicationName": "repoctx-ide",
 	"dataFolderName": ".repoctx-ide",
 	"sharedDataFolderName": ".repoctx-ide-shared",

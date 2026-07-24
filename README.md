@@ -1,8 +1,14 @@
+<p align="center">
+  <img src="resources/branding/repoctx-app-icon.svg" width="112" alt="Repoctx IDE icon">
+</p>
+
 # Repoctx IDE
 
-**Repository context before change. Deterministic evidence before merge.**
+**Context before change. Evidence before merge.**
 
 Repoctx IDE is a native Code OSS evidence workbench for AI-assisted software teams, created by [Oluwasegun Olumbe](https://github.com/nugehs). It keeps the familiar editor workflow while making repository context, change impact, review readiness, merge gates, and durable audit evidence visible beside the work.
+
+The connected Repoctx mark represents repository context moving through evidence toward a human decision. Editable brand masters live in [`resources/branding`](resources/branding).
 
 ## Trust Rail
 
