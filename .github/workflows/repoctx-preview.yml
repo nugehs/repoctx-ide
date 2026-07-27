@@ -1,0 +1,182 @@
+name: Repoctx Preview
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/repoctx-preview.yml"
+      - ".nvmrc"
+      - ".npmrc"
+      - "build/.moduleignore*"
+      - "build/gulpfile.vscode.ts"
+      - "build/lib/copilot.ts"
+      - "build/lib/test/copilot.test.ts"
+      - "package.json"
+      - "package-lock.json"
+      - "product.json"
+      - "resources/branding/**"
+      - "resources/darwin/**"
+      - "src/vs/base/common/product.ts"
+      - "src/vs/platform/dialogs/electron-browser/dialog.ts"
+      - "src/vs/workbench/browser/parts/dialogs/dialog.ts"
+      - "src/vs/workbench/contrib/welcomeGettingStarted/**"
+      - "src/vs/workbench/contrib/welcomeOnboarding/**"
+      - "src/vs/workbench/contrib/repoctx/**"
+  push:
+    tags:
+      - "preview-v*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-macos-arm64:
+    name: Build macOS Apple Silicon preview
+    runs-on: macos-15
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        env:
+          GYP_DEFINES: kerberos_use_rtld=false
+          GITHUB_TOKEN: ${{ github.token }}
+        run: npm ci
+
+      - name: Type-check workbench
+        run: npm run typecheck-client
+
+      - name: Compile workbench
+        run: npm run compile-client
+
+      - name: Test Repoctx evidence integration
+        run: |
+          node test/unit/node/index.js --run src/vs/workbench/contrib/repoctx/test/common/repoctx.test.ts
+          node --test build/lib/test/copilot.test.ts
+
+      - name: Build Apple Silicon app
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: npm run gulp vscode-darwin-arm64
+
+      - name: Sign, smoke-test, and package preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          APP="$GITHUB_WORKSPACE/../VSCode-darwin-arm64/Repoctx.app"
+          EXECUTABLE="$APP/Contents/MacOS/Repoctx"
+          APP_ROOT="$APP/Contents/Resources/app"
+          UNPACKED_ROOT="$APP_ROOT/node_modules.asar.unpacked"
+          CLI="$APP_ROOT/node_modules/@nugehs/repoctx/src/cli.js"
+          EXPECTED_VERSION="$(node -p "require('./node_modules/@nugehs/repoctx/package.json').version")"
+
+          test "$(uname -m)" = "arm64"
+          test -x "$EXECUTABLE"
+          test -f "$APP/Contents/Resources/Repoctx.icns"
+          cmp "$GITHUB_WORKSPACE/resources/darwin/code.icns" "$APP/Contents/Resources/Repoctx.icns"
+          test -f "$CLI"
+          test -x "$APP_ROOT/node_modules/@nugehs/tieline/bin/tieline.mjs"
+          test -x "$APP_ROOT/node_modules/@nugehs/bouncer/src/cli.js"
+          test -x "$APP_ROOT/node_modules/@nugehs/aiglare/src/cli.js"
+          test -x "$APP_ROOT/bin/repoctx-runtime/node"
+
+          PACKAGED_VERSION="$(node -p "require('$APP_ROOT/node_modules/@nugehs/repoctx/package.json').version")"
+          test "$PACKAGED_VERSION" = "$EXPECTED_VERSION"
+          test "$(node -p "require('$APP_ROOT/product.json').productTagline")" = "Context before change. Evidence before merge."
+
+          codesign --force --deep --sign - --timestamp=none "$APP"
+          codesign --verify --deep --strict --verbose=2 "$APP"
+          ELECTRON_NO_ASAR=1 ELECTRON_RUN_AS_NODE=1 "$EXECUTABLE" -e '
+            const path = require("path");
+            const root = process.argv[1];
+            const bindings = [
+              "@parcel/watcher/build/Release/watcher.node",
+              "@vscode/fs-copyfile/build/Release/vscode_fs.node",
+              "@vscode/native-watchdog/build/Release/watchdog.node",
+              "@vscode/policy-watcher/build/Release/vscode-policy-watcher.node",
+              "@vscode/spdlog/build/Release/spdlog.node",
+              "@vscode/sqlite3/build/Release/vscode-sqlite3.node",
+              "kerberos/build/Release/kerberos.node",
+              "native-is-elevated/build/Release/iselevated.node",
+              "native-keymap/build/Release/keymapping.node",
+              "node-pty/build/Release/pty.node"
+            ];
+            for (const binding of bindings) {
+              require(path.join(root, binding));
+              console.log(`Loaded ${binding}`);
+            }
+          ' "$UNPACKED_ROOT"
+          CLEAN_PATH="$APP_ROOT/bin/repoctx-runtime:/usr/bin:/bin:/usr/sbin:/sbin"
+          ELECTRON_NO_ASAR=1 ELECTRON_RUN_AS_NODE=1 PATH="$CLEAN_PATH" "$EXECUTABLE" "$CLI" doctor --json
+          PATH="$CLEAN_PATH" "$APP_ROOT/node_modules/@nugehs/tieline/bin/tieline.mjs" --help
+          PATH="$CLEAN_PATH" "$APP_ROOT/node_modules/@nugehs/bouncer/src/cli.js" help
+          PATH="$CLEAN_PATH" "$APP_ROOT/node_modules/@nugehs/aiglare/src/cli.js" --help
+
+          SMOKE_REPO="$RUNNER_TEMP/repoctx-gate-smoke"
+          GATE_JSON="$RUNNER_TEMP/repoctx-gate-smoke.json"
+          mkdir -p "$SMOKE_REPO"
+          git -C "$SMOKE_REPO" init --quiet --initial-branch=main
+          git -C "$SMOKE_REPO" config user.email "preview@repoctx.dev"
+          git -C "$SMOKE_REPO" config user.name "Repoctx Preview"
+          printf 'export const ready = true;\n' > "$SMOKE_REPO/smoke.js"
+          git -C "$SMOKE_REPO" add smoke.js
+          git -C "$SMOKE_REPO" commit --quiet --message initial
+          printf 'export const changed = true;\n' >> "$SMOKE_REPO/smoke.js"
+          ELECTRON_NO_ASAR=1 ELECTRON_RUN_AS_NODE=1 PATH="$CLEAN_PATH" \
+            REPOCTX_AIGLARE=1 \
+            REPOCTX_TIELINE_BIN="$APP_ROOT/node_modules/@nugehs/tieline/bin/tieline.mjs" \
+            REPOCTX_BOUNCER_BIN="$APP_ROOT/node_modules/@nugehs/bouncer/src/cli.js" \
+            REPOCTX_AIGLARE_BIN="$APP_ROOT/node_modules/@nugehs/aiglare/src/cli.js" \
+            "$EXECUTABLE" "$CLI" gate "$SMOKE_REPO" --request "validate packaged AI gate" --json > "$GATE_JSON"
+          node -e 'const fs = require("fs"); const data = JSON.parse(fs.readFileSync(process.argv[1], "utf8")); const check = data.checks.find(item => item.name === "AI governance"); if (check?.status !== "PASS") { throw new Error(`AI governance smoke failed: ${JSON.stringify(check)}`); }' "$GATE_JSON"
+
+          DIST="$RUNNER_TEMP/repoctx-preview"
+          SHORT_SHA="${GITHUB_SHA:0:7}"
+          ARCHIVE="Repoctx-macOS-arm64-$SHORT_SHA.zip"
+          mkdir -p "$DIST"
+          ditto -c -k --sequesterRsrc --keepParent "$APP" "$DIST/$ARCHIVE"
+          cd "$DIST"
+          shasum -a 256 "$ARCHIVE" > "$ARCHIVE.sha256"
+
+      - name: Upload preview
+        uses: actions/upload-artifact@v7
+        with:
+          name: repoctx-macos-arm64-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/repoctx-preview/*.zip
+            ${{ runner.temp }}/repoctx-preview/*.sha256
+          if-no-files-found: error
+          retention-days: 14
+
+  publish-prerelease:
+    name: Publish GitHub prerelease
+    if: startsWith(github.ref, 'refs/tags/preview-v')
+    needs: build-macos-arm64
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download preview
+        uses: actions/download-artifact@v8
+        with:
+          name: repoctx-macos-arm64-${{ github.sha }}
+          path: dist
+
+      - name: Create prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --prerelease \
+            --title "Repoctx $GITHUB_REF_NAME" \
+            --notes "Apple Silicon developer preview. Verify the attached checksum before installing. This build is ad-hoc signed and not yet Apple-notarized."

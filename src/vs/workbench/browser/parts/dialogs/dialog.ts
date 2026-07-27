@@ -46,6 +46,7 @@ export function createWorkbenchDialogOptions(options: Partial<IDialogOptions>, k
 }
 
 export function createBrowserAboutDialogDetails(productService: IProductService): { title: string; details: string; detailsToCopy: string } {
+	const productTagline = productService.productTagline;
 	const creatorDetails = productService.creatorName ? localize('aboutCreatedBy', "Created by {0}", productService.creatorName) : undefined;
 	const detailString = (useAgo: boolean): string => {
 		return localize('aboutDetail',
@@ -57,8 +58,8 @@ export function createBrowserAboutDialogDetails(productService: IProductService)
 		);
 	};
 
-	const details = [creatorDetails, detailString(true)].filter(detail => detail !== undefined).join('\n');
-	const detailsToCopy = [creatorDetails, detailString(false)].filter(detail => detail !== undefined).join('\n');
+	const details = [productTagline, creatorDetails, detailString(true)].filter(detail => detail !== undefined).join('\n');
+	const detailsToCopy = [productTagline, creatorDetails, detailString(false)].filter(detail => detail !== undefined).join('\n');
 
 	return {
 		title: productService.nameLong,

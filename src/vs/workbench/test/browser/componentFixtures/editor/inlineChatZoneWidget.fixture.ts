@@ -291,7 +291,10 @@ function renderInlineChatZoneWidget({ container, disposableStore, theme }: Compo
 				override readonly onDidChangeFolder = Event.None;
 				override getFolder() { return undefined; }
 			}());
-			reg.defineInstance(IChatContextService, new class extends mock<IChatContextService>() { }());
+			reg.defineInstance(IChatContextService, new class extends mock<IChatContextService>() {
+				override readonly onDidChangeWorkspaceContext = Event.None;
+				override getWorkspaceContextItems() { return []; }
+			}());
 			reg.defineInstance(IChatAttachmentWidgetRegistry, new class extends mock<IChatAttachmentWidgetRegistry>() { }());
 			reg.defineInstance(IChatAttachmentResolveService, new class extends mock<IChatAttachmentResolveService>() { }());
 			reg.defineInstance(IChatImageCarouselService, new class extends mock<IChatImageCarouselService>() { }());

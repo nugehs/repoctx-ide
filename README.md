@@ -1,8 +1,14 @@
-# Repoctx IDE
+<p align="center">
+  <img src="resources/branding/repoctx-app-icon.svg" width="112" alt="Repoctx icon">
+</p>
 
-**Repository context before change. Deterministic evidence before merge.**
+# Repoctx
 
-Repoctx IDE is a native Code OSS evidence workbench for AI-assisted software teams, created by [Oluwasegun Olumbe](https://github.com/nugehs). It keeps the familiar editor workflow while making repository context, change impact, review readiness, merge gates, and durable audit evidence visible beside the work.
+**Context before change. Evidence before merge.**
+
+Repoctx is a native Code OSS evidence workbench for AI-assisted software teams, created by [Oluwasegun Olumbe](https://github.com/nugehs). It keeps the familiar editor workflow while making repository context, change impact, review readiness, merge gates, and durable audit evidence visible beside the work.
+
+The connected Repoctx mark represents repository context moving through evidence toward a human decision. Editable brand masters live in [`resources/branding`](resources/branding).
 
 ## Trust Rail
 
@@ -10,7 +16,38 @@ The Repoctx Trust Rail lives in the right secondary sidebar so it can sit beside
 
 When Context evidence is available, Repoctx automatically provides every IDE agent request with a concise repository map and exact evidence paths. Chat shows a read-only `Repoctx · N evidence files` attachment before and after the request, so the handoff is visible without becoming another step to manage. Agents can open deeper evidence on demand, without copying full reports into every prompt or coupling the workflow to a particular model provider. This is enabled by default and can be disabled with `repoctx.agentContext.enabled`.
 
-See the [Repoctx IDE trust workflow](docs/repoctx-ide/trust-workflow.md) for the interaction contract and evidence states.
+See the [Repoctx trust workflow](docs/repoctx-ide/trust-workflow.md) for the interaction contract and evidence states.
+
+## Try Repoctx
+
+### macOS preview
+
+The first packaged preview targets Apple Silicon Macs. Download the newest prerelease ZIP and matching `.sha256` file from [Repoctx Releases](https://github.com/nugehs/repoctx-ide/releases), then verify it before opening:
+
+```bash
+shasum -a 256 -c Repoctx-macOS-arm64-*.sha256
+```
+
+Unzip the app, drag **Repoctx** into **Applications**, then Control-click it and choose **Open** the first time. Preview builds are ad-hoc signed but not yet Apple-notarized; never disable Gatekeeper globally.
+
+### Run from source
+
+Repoctx currently requires Node `24.18.0` and npm 11. Clone the repository, use the version in `.nvmrc`, install the locked dependencies, and launch with an isolated trial profile:
+
+```bash
+git clone --depth 1 https://github.com/nugehs/repoctx-ide.git
+cd repoctx-ide
+nvm install
+nvm use
+npm install
+./scripts/code.sh \
+  --user-data-dir "$PWD/.build/repoctx-profile/user-data" \
+  --extensions-dir "$PWD/.build/repoctx-profile/extensions"
+```
+
+Open a repository you control, select the shield-shaped Repoctx view, describe the intended change, and follow Context → Impact → Review → Gate → Audit. Repoctx is bundled; no global Repoctx installation is needed.
+
+See the [macOS preview guide](docs/repoctx-ide/macos-preview.md) for sharing, architecture, and current trust limitations.
 
 ## Development
 
@@ -19,6 +56,8 @@ See the [Repoctx IDE trust workflow](docs/repoctx-ide/trust-workflow.md) for the
 ```
 
 The Repoctx integration is part of the workbench source under `src/vs/workbench/contrib/repoctx`; it is not an extension.
+
+Repoctx currently bundles the published `@nugehs/repoctx@2.5.0` engine. Dependabot checks npm daily and opens a focused pull request when a newer engine version is available, so it is tested and reviewed before it ships with a Repoctx release.
 
 ## Code OSS lineage
 

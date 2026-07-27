@@ -1,4 +1,4 @@
-# Repoctx IDE trust workflow
+# Repoctx trust workflow
 
 This is the visual contract for transforming Code OSS into the Repoctx evidence workbench. The editor stays familiar while repository understanding, change impact, review readiness, and durable audit evidence become a visible path.
 
@@ -80,7 +80,7 @@ stateDiagram-v2
 - The current state is always expressed with text and an icon, never color alone.
 - Missing task text is shown as `Needs request`; typing a change request immediately unlocks the task-dependent stages.
 - Failed stages retain a visible `Failed` state and a one-click retry action instead of returning to an ambiguous idle state.
-- The bundled Repoctx CLI is launched through Repoctx IDE's own runtime as a direct integrated-terminal process with structured arguments. Users do not need a separate global install, task text is never composed into a shell command, and Electron archive handling is disabled for repository scans so ordinary `.asar` fixture files stay quiet.
+- The bundled Repoctx CLI is launched through Repoctx's own runtime as a direct integrated-terminal process with structured arguments. Users do not need a separate global install, task text is never composed into a shell command, and Electron archive handling is disabled for repository scans so ordinary `.asar` fixture files stay quiet.
 - A successful stage writes a named artifact into `.dev-context` and the rail refreshes from the filesystem.
 - Gate automatically runs against the staged Git index after Source Control changes, writing `gate.md` as a durable receipt. It shows `Pass`, `Warning`, or `Fail` for the exact change about to be committed, then separately leaves GitHub-only review, CI, protection, and mergeability evidence to PR mode. The bundled Tieline contract, Bouncer compliance, and Aiglare AI-governance checks remain visible while checking and resolve from the receipt; status is never inferred from process activity alone.
 - A failed stage points to the visible Repoctx terminal output.
@@ -89,6 +89,6 @@ stateDiagram-v2
 
 ## Repoctx engine updates
 
-Repoctx IDE bundles a tested Repoctx engine version. Dependency automation is configured to watch registry-backed `@nugehs/repoctx` releases and open a focused update pull request. CI must validate that update before it ships in an IDE release. An installed IDE never changes its trust engine silently between application releases.
+Repoctx bundles a tested engine version. Dependency automation is configured to watch registry-backed `@nugehs/repoctx` releases and open a focused update pull request. CI must validate that update before it ships in a Repoctx release. An installed app never changes its trust engine silently between releases.
 
-The current foundation pins the public Repoctx `2.4.0` source commit because `2.4.0` is not yet available from npm. After that version is published, switch this dependency once to the npm package; later npm bumps will flow through the automated update pull requests.
+The current foundation pins the published `@nugehs/repoctx@2.5.0` package. Dependabot checks npm daily, and later releases flow through focused update pull requests instead of changing the bundled engine silently.
