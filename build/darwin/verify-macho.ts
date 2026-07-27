@@ -52,6 +52,12 @@ const FILES_TO_SKIP = [
 	'**/node_modules.asar.unpacked/@github/copilot/tgrep/bin/darwin-*/**',
 	'**/node_modules/@github/copilot/sdk/tgrep/bin/darwin-*/**',
 	'**/node_modules.asar.unpacked/@github/copilot/sdk/tgrep/bin/darwin-*/**',
+	// Copilot dependencies package platform-specific binaries in their own trees.
+	'**/extensions/copilot/node_modules/@anthropic-ai/claude-agent-sdk/vendor/**',
+	'**/extensions/copilot/node_modules/@img/sharp-darwin-*/**',
+	'**/extensions/copilot/node_modules/@img/sharp-libvips-darwin-*/**',
+	// The Git extension's N-API copy helper is packaged separately from the core app.
+	'**/extensions/git/node_modules/@vscode/fs-copyfile/build/Release/vscode_fs.node',
 ];
 
 
